@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import { Text, ScrollView, Image, View, Modal, Pressable, TouchableOpacity, RefreshControl, TextInput } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Text, ScrollView, Image, View, Modal, Pressable, TouchableOpacity, RefreshControl, TextInput, SafeAreaView } from 'react-native';
 import { Icon, LinearProgress, Overlay } from 'react-native-elements';
 import Card from "./components/Card";
 import axios from 'axios';
@@ -15,7 +15,7 @@ function HomeScreen() {
   const [categoryType, setCategoryType] = useState('general');
 
   // variables
-  const API_KEY = "Your api key here";  // Get it from https://newsapi.org/
+  const API_KEY = "API KEY HERE";  // Get it from https://newsapi.org/
   const url = `https://newsapi.org/v2/top-headlines?country=${countryCode}&apiKey=${API_KEY}`;
   const url2 = `https://newsapi.org/v2/top-headlines?country=${countryCode}&category=${categoryType}&apiKey=${API_KEY}`;
   const defaultImg = "https://cdn.pixabay.com/photo/2019/04/29/16/11/new-4166472_960_720.png";
@@ -81,12 +81,23 @@ function HomeScreen() {
   const [netCheck, setNetCheck] = useState(false);
   const [isContentFetched, setisContentFetched] = useState(false);
 
+  const scrollRef = useRef();
+
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  }
+
   // Functions
   useEffect(() => {
+    scrollToTop();
     axios.get(url)
       .then(res => {
         setpostData(res.data['articles']);
         setSavedPostData(res.data['articles']);
+        // console.log(res.data);
       })
       .catch(err => {
         setpostData(savedPostData);
@@ -95,6 +106,7 @@ function HomeScreen() {
   }, [countryCode]);
 
   useEffect(() => {
+    scrollToTop();
     axios.get(url2)
       .then(res => {
         setpostData(res.data['articles']);
@@ -128,7 +140,7 @@ function HomeScreen() {
   }, [countryCode]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'row', borderWidth: 3, borderBottomColor: '#fff', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: "row", justifyContent: 'flex-start' }}>
           <Image source={require("./assets/icon.png")} style={{ height: 60, width: 60, marginLeft: 10, marginTop: 25 }} />
@@ -267,6 +279,7 @@ function HomeScreen() {
 
       </View>
       <ScrollView
+        ref={scrollRef}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -278,7 +291,8 @@ function HomeScreen() {
           <Text style={{ color: 'gold', fontSize: 25, fontFamily: "serif" }}>Today's Top Headlines</Text>
         </View>
         {postData.map((item, index) => (
-          <Card key={index}
+          <Card
+            key={index + item.publishedAt}
             title={item.title}
             description={item.description === null ? item.title : item.description}
             imgUrl={item.urlToImage === null ? defaultImg : item.urlToImage}
@@ -290,7 +304,7 @@ function HomeScreen() {
         ))}
       </ScrollView>
       <StatusBar style="light" />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -305,6 +319,7 @@ function SearchScreen() {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [filter, setFilter] = useState('publishedAt');
 
+  const API_KEY = "API KEY HERE";
   const url = `https://newsapi.org/v2/everything?q=${search}&sortBy=${filter}&apiKey=${API_KEY}`;
   const url2 = `https://newsapi.org/v2/everything?q=${search}&sortBy=${filter}&apiKey=${API_KEY}`;
 
@@ -338,7 +353,7 @@ function SearchScreen() {
   }, [filter]);
 
   const OnSubmitSearch = () => {
-    setsearchSubmit(true);
+    setsearchSubmit(!searchSubmit);
     setTextDisplay('flex');
     setLoadingDisplay('flex');
     setTimeout(() => setLoadingDisplay('none'), 4000);
@@ -350,7 +365,7 @@ function SearchScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'row', borderWidth: 3, borderBottomColor: '#fff', justifyContent: 'space-between' }}>
         <View style={{ marginBottom: 20 }}>
           <Text style={styles.appName}> Newsly </Text>
@@ -449,7 +464,7 @@ function SearchScreen() {
         </View>
       </ScrollView>
       <StatusBar style="light" />
-    </View>
+    </SafeAreaView>
   );
 }
 
