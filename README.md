@@ -1,7 +1,7 @@
 # Newsly
 ## News API based Android App, developed using React Native with Expo cli.
 
-Watch App here: https://www.linkedin.com/posts/md-faisal-farooquee-807b39198_reactnative-expo-appdevelopment-activity-6812641468285493248-sT3s
+Watch App: [here](https://www.linkedin.com/posts/md-faisal-farooquee_reactnative-expo-appdevelopment-activity-6812641468285493248-NztV)
 
 Download Apk from here: https://drive.google.com/file/d/1nTEODbt2gbjOjVZxajfOXz4YlUrrwwup/view?usp=sharing
 
